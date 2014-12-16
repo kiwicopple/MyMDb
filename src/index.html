@@ -1,0 +1,459 @@
+<!-- 
+// The MIT License (MIT)
+// Copyright (c) 2014 Paul Copplestone
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.  
+-->
+
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+	<title>MyMDb</title>
+	
+    <meta name="description" content="Your personal movie collection">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet'  type='text/css'>
+	
+	<!-- build:css css/production.min.css -->
+	<link rel="stylesheet" href="css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
+	<link rel="stylesheet" href="css/main.css"/>
+	<!-- /build -->
+	
+	<link rel="icon" type="image/png"  href="favicon.ico">
+    <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+</head>
+<body>
+    <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <script>
+        // Check for the various File API support.
+        if ( !(window.File && window.FileReader && window.FileList && window.Blob && Modernizr.localstorage) ) {
+        	alert('Some functionality that this site uses is not supported by your browser. Please upgrade your browser (we recommend the latest Firefox or Chrome).');
+        } 
+    </script>
+    <div class="container">
+        <div class="row" >
+		
+			<!-- Side Bar -->
+            <div class="col-md-4">
+			<div class="col-md-12">
+				<h1>MyMDb<small>BETA</small></h1>
+				<div class="form-group">
+					<span class="btn btn-file btn-success" 
+						data-toggle="tooltip" 
+						data-placement="bottom" 
+						title="Browse for movies on your computer. Tip: you can select multiple movies at once.">
+					<i class="glyphicon glyphicon-plus"></i><input type="file" id="files" name="files[]" multiple>
+					</span>
+					<button id="btn-add-list-toggle" 
+						type="button" 
+						class="btn btn-default section-add-list-toggle"  
+						data-toggle="tooltip" 
+						data-placement="bottom"  
+						title="Enter list of movies">
+						<i class="glyphicon glyphicon-align-left"></i>
+					</button>
+					<button type="button" class="btn btn-default " 
+						id="btn-empty" 
+						data-toggle="tooltip" 
+						data-placement="bottom" 
+						title="Empty your collection of movies from MyMDb">
+						<i class="glyphicon glyphicon-trash"></i>
+					</button>
+					<button type="button" class="btn btn-default panel-getting-started-toggle" id="btn-help" 
+						data-toggle="tooltip" 
+						data-placement="bottom" title="Click me for help">
+						<i class="glyphicon glyphicon-question-sign"></i>
+					</button>
+				</div>
+				<div id="panel-delete" class="panel panel-danger collapse">
+					<div class="panel-heading">Please confirm</div>
+					<div class="panel-body">Are you sure you want to empty your entire list of movies? This will not delete any movies from your computer.</div>
+					<div class="panel-footer clearfix">
+						<div class="pull-right">
+							<button type="button" id="btn-delete-cancel" class="btn btn-default btn-xs">Cancel</button>
+							<button type="button" id="btn-delete-confirm" class="btn btn-danger btn-xs">Delete</button>
+						</div>
+					</div>
+				</div>
+				
+				
+				<hr>
+				
+				
+				
+				
+				<!--- Search Form --->
+				<form class="" role="search" id="search-form">
+					<div id="div-movie-count" class="form-group clearfix collapse">
+						<small><span class="pull-right">
+							<span id="badge-count-showing" class="badge">0</span> OF 
+							<span id="badge-count"  class="badge">0</span>
+						</span></small>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<label class="sr-only" for="q">Search</label>
+							<span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+							<input type="text" class="form-control" placeholder="Search" name="q" id="q" data-list="#all-movies">
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<label class="sr-only" for="search-rating">Rating</label>
+							<span class="input-group-addon"><i class="glyphicon glyphicon-star"></i></span>
+							<select class="form-control" id="search-rating" name="search-rating">
+								<option value="all">All</option>
+								<option value="9">9+</option>
+								<option value="8">8+</option>
+								<option value="7">7+</option>
+								<option value="6">6+</option>
+								<option value="5">5+</option>
+								<option value="4">4+</option>
+								<option value="3">3+</option>
+								<option value="2">2+</option>
+								<option value="1">1+</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<label class="sr-only" for="search-order-by">Order By</label>
+							<span class="btn btn-default input-group-addon" type="button" id="btn-order-by">
+							<i id="order-chevron" class="glyphicon glyphicon-chevron-down"></i>
+							</span>
+							<select class="form-control" id="search-order-by" name="search-order-by">
+								<option value="blank" selected></option>
+								<option value="title">Title</option>
+								<option value="release">Release Date</option>
+								<option value="rating">Rating</option>
+							</select>
+						</div>
+					</div>
+				</form>
+				<!--- /Search Form --->
+				
+				
+				
+				
+				<div id="alert-errors" class="alert alert-warning alert-dismissible collapse" role="alert">
+					<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<p>Some file names were unable to be read</p>
+					<hr>
+					<button type="button" class="btn btn-warning btn-block btn-sm" 
+						data-toggle="collapse" 
+						data-target="#error-list" 
+						aria-expanded="true" 
+						aria-controls="error-list">
+					Show/Hide Warnings
+					</button>
+					<div id="error-list" class="collapse"></div>
+				</div>
+				
+				<div class="panel panel-primary">
+					<div class="panel-heading">Your movies, IMDb's information</div>
+					<div class="panel-body">
+						<p>
+							MyMDb turns your personal movie collection into a searchable list. Once you tell MyMDb the movies
+							you have, it will use IMDb to the details of each movie.
+						</p>
+						
+						<p>
+							We're still in Beta, so make sure to subscribe below and we'll let you known
+							when we make improvements to this site.<br />
+							<a href="http://eepurl.com/-8szb" target="_blank">Sign up for updates</a>
+						</p>
+					</div>
+				</div>
+				
+				
+			</div>
+            </div>
+			<!-- /Side Bar -->
+			
+			
+			
+			<!-- Main Body -->
+            <div class="col-md-8 row">
+                <div class="col-md-12">
+                    <div class="progress collapse" id="progress-movie-scan">
+                        <div id="progress-bar" class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%;">1%</div>
+                    </div>
+										
+					<div id="section-add-list" class="collapse">
+					<div class="panel panel-default">
+						<div class="panel-heading">Add List of Movies</div>
+						<div class="panel-body">
+							<form class="form" role="form">
+							<div class="form-group">
+								<label for="txt-load-list">Enter list of movies and the year (if known):</label>
+								<textarea id="txt-load-list" placeholder="e.g. The Shawshank Redemption (1994)" class="form-control custom-control" rows="3" style="resize:none"></textarea> 
+								
+							</div>
+							<div class="form-group">
+							<div class="pull-right">
+								<button type="submit" id="btn-load-list-cancel" class="btn btn-default section-add-list-toggle">Cancel</button>
+								<button type="submit" id="btn-load-list" class="btn btn-success">Load</button>
+							</div>
+							<div class="checkbox">
+								<label data-toggle="tooltip" 
+										data-placement="top" 
+										title="This is useful if your list contains filenames which aren't movies (such as subtitles, cover images etc).
+											MyMDb will automatically filter these out.">
+								  <input type="checkbox" id="chk-ignore-extension"> 
+										My list includes file extensions 
+										<br /><i>e.g. The Shawshank Redemption (1994).<b>avi</b></i>
+								</label>
+							  </div>
+							  
+							  </div>
+							</form>
+							<hr>
+							<h4>Making a list of movies</h4>
+							<p>
+								Are your movies stored in a series of subfolders? 
+								Most browsers (correctly) impose security restrictions that will not allow this site to recurse through subdirectories
+								on your computer.
+							</p>
+							<p>
+								See below for instructions on how you can create a text file that includes the names of
+								all the movies in a folder on your computer. Once you have created the file, copy and paste the list into the text area 
+								above and click <code>Load</code>
+								<br />All movies must be on a new line, with the year that the movie was released included at the end of the line.
+							</p>	
+						  </div>
+						</div>
+						
+						<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+						  <div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingTwo">
+							  <h4 class="panel-title">
+								<a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+								  Making a list on Linux
+								</a>
+							  </h4>
+							</div>
+							<div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+							  <div class="panel-body">
+								<p>
+									The following will create a txt file in your movie directory called <i>MyMDb.txt</i> which lists all the 
+									files in a selected directory and its subdirectories. 
+								</p>
+								<ol>
+									<li>Open Terminal - On your keyboard type:<br /> <code>Ctrl+Alt+T</code></li>
+									<li>
+										Enter the following (make sure to change <code><i class="text-primary">[path/to/movies]</i></code> to the folder containing all your movies):<br />
+										<code>find  <i class="text-primary">[path/to/movies]</i> -type f -printf "%f\n" > <i class="text-primary">[path/to/movies]</i>/MyMDb.txt</code> 
+									</li>
+									<li>Type <code>Enter</code></li>
+								</ol>
+								<p>
+									All done! If you were successful then there will be a txt file on your desktop. Open the file and copy the 
+									contents into the text box above.
+								</p>
+								</div>
+							</div>
+						  </div>
+						  
+						  <div class="panel panel-default">
+							<div class="panel-heading" role="tab" id="headingOne">
+							  <h4 class="panel-title">
+								<a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								  Making a list on Windows
+								</a>
+							  </h4>
+							</div>
+							<div id="collapseOne"  class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+							  <div class="panel-body">
+								<p>
+									The following will create a txt file in your Movies folder called <i>MyMDb.txt</i> which lists all the 
+									files in a selected directory and its subdirectories. We will filter out files that are not valid movies when you load
+									the list into MyMDb.
+								</p>
+							  <h5><strong>Open Command Prompt</strong></h5>
+									<ol>
+										<li>On your keyboard type <code>Windows+R</code></li>
+										<li>Type <code>cmd</code> and click <code>Enter</code></li>
+										<li>
+											Enter the following (make sure to change <code><i class="text-primary">[path\to\movies]</i></code> to the folder containing all your movies and
+											include the quote marks - e.g. "C:\Users\Joe\Documents\Movies").<br />
+											<small><i>
+												Tip: you can paste in Command Prompt by right-clicking and selecting "Paste". 
+											</i></small><br />
+											<code>dir  "<i class="text-primary">[C:\path\to\movies]</i>" /s /b /a:-d /o:n > 
+											"<i class="text-primary">[C:\path\to\movies]</i>\MyMDb.txt"</code>
+										</li>
+									</ol>
+									<p>
+										All done! If you were successful then there will be a txt file in the path you specified. Open the file and copy the 
+										contents into the text box above.
+									</p>
+								</div>
+							</div>
+						  </div>
+						</div>
+					</div>
+					
+					<div id="panel-getting-started" class="panel panel-default collapse">
+						<div class="panel-heading">
+							<div class="btn-group pull-right">
+								<button type="button" class="btn btn-default btn-xs panel-getting-started-toggle">
+									<i class="glyphicon glyphicon-remove"></i>
+								</button>
+							</div>
+							<h4 class="panel-title"><i class="glyphicon glyphicon-question-sign"></i> Getting Started</h4>
+						</div>
+						
+						<div class="panel-body">
+							
+							<h5>
+								<span class="label label-default"><i class="glyphicon glyphicon-plus"></i></span>
+								<strong>Browse for movies on your computer</strong>
+							</h5>
+							<p>
+								Use this button to browse on your computer. You can select mulitple movies at once using this method.
+								MyMDb will guess the name and year of the movie based on the names of the files you select.
+								Don't worry if the file name contains lots of irrelevant infornation - MyMDb will ignore 
+								everything after the year (the first set of 4 digits). If the year isn't included in the name
+								MyMdb will use the entire file name to search IMDb.
+							</p>
+						    <hr>
+						    <h5>
+								<span class="label label-default" ><i class="glyphicon glyphicon-align-left"></i></span>
+								<strong>Enter list of movies</strong>
+							</h5>
+							<p>
+							  If your movies are stored in a series of subfolders, it will be easier to enter a list of movies manually.
+							  This will give you instructions on how to create a list.
+							</p>
+							<hr>
+						    <h5>
+								<span class="label label-default" ><i class="glyphicon glyphicon-trash"></i></span>
+								<strong>Empty your list</strong>
+							</h5>
+							<p>
+							  This will remove all movies from your collection. MyMDb will never delete any files from your computer - 
+							  this will only remove movies from your MyMDB list.
+							</p>
+							  
+						</div>
+					</div>
+					
+					
+				</div>
+					
+				
+                <div class="col-md-12" id="all-movies"></div>
+            </div>
+			<!-- /Main Body -->
+			
+        </div>
+        <hr>
+        <footer>
+            
+			
+			
+			<div class="col-md-5">
+				<p>&copy; MyMDb 2014</p>
+				
+			</div>
+        </footer>
+    </div>
+    <!-- /container -->
+
+	
+	
+
+
+<script id="movie-summary-template" type="text/x-handlebars-template">
+<div class="movie-container " id="{{id}}" data-rating="{{rating}}"  data-raw="{{raw}}" >
+	<div class="panel panel-primary" >
+	  <div class="panel-heading">
+			<h3 class="panel-title">{{title}}</h3>
+		</div>
+		<div class="panel-body">
+		  <img src="http://dummyimage.com/85x125/000/fff.png" class="img-thumbnail">
+		  <p>
+			{{plot}}
+			
+		  </p>
+		  
+		</div>
+			<ul class="list-group">
+				<li class="list-group-item">
+					<strong>Actors:</strong> {{actors}}. 
+					<strong>Director:</strong> {{director}}.
+				</li>
+				<li class="list-group-item">
+					<strong>Genre:</strong> {{genre}}. 
+					<strong>Released:</strong> {{released}}. 
+					<strong>Language:</strong> {{language}}.
+				</li> 
+			</ul>
+		<div class="panel-footer">
+				<span class="rating"><span class="glyphicon glyphicon-star btn-sm"></span><strong>{{rating}}</strong></span>
+				<span class="glyphicon glyphicon-calendar btn-sm"></span><strong>{{year}}</strong>
+				<span class="glyphicon glyphicon-time btn-sm"></span><strong>{{runtime}}</strong>
+			<span class="pull-right">
+				<a class="btn btn-xs btn-primary" href="http://imdb.com/title/{{id}}" target="_blank">
+				<i class="glyphicon glyphicon-link"
+						data-toggle="tooltip"  data-placement="top" 
+						title="View on IMDb"></i></a>
+				<button type="button" class="btn btn-xs btn-danger btn-remove-movie" data-id="{{id}}" 
+						data-toggle="tooltip"  data-placement="top" 
+						title="Remove this movie from your collection"><i class="glyphicon glyphicon-remove"></i></button>
+			</span>
+		</div>
+	</div>
+	</div>
+</script>	
+
+	<!-- build:js js/production.min.js -->
+	<script type="text/javascript" src="js/vendor/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="js/vendor/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/vendor/handlebars-v2.0.0.js"></script>
+	<script type="text/javascript" src="js/vendor/jquery.hideseek.min.js"></script>
+	<script type="text/javascript" src="js/vendor/moment.js"></script>
+	<script type="text/javascript" src="js/guessTheShow.js"></script>
+	<script type="text/javascript" src="js/movieManager.js"></script>
+	<script type="text/javascript" src="js/main.js"></script>
+	<!-- /build -->
+		
+	<!-- Google Analytics -->
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-1092836-14', 'auto');
+	  ga('send', 'pageview');
+
+	</script>
+	
+    </body>
+</html>

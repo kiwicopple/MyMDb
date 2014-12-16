@@ -1,0 +1,54 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+body {
+	font-family: 'PT Sans', sans-serif;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.movie-container h3{
+	font-weight: bold;
+}
+.movie-container .img-thumbnail{
+	float: left;
+}
+.movie-container p{
+	padding-left: 110px;
+}
+.movie-container ul{
+	font-size: 12px;
+}
+.movie-container .panel-footer span.rating {
+	color: #FF8C00;
+    float: left;
+    width: 60px;
+}
+
+#error-list {
+	padding-top: 20px;
+	font-size: 11px;
+}
