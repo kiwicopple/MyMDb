@@ -6080,6 +6080,28 @@ jQuery.fn.highlight=function(t){function e(t,i){var n=0;if(3==t.nodeType){var a=
     }
 }).call(this);
 
+// The MIT License (MIT)
+
+// Copyright (c) 2014 Paul Copplestone
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE. 
+
 /*
 Namespace usage: http://stackoverflow.com/questions/881515/how-do-i-declare-a-namespace-in-javascript
 
@@ -6094,7 +6116,7 @@ guessTheShow.publicMethod = function() {}
 
 (function( guessTheShow, $, undefined ) {	
 	var VALID_MOVIE_EXTENSIONS = ['AVI','CAM','FLV','MPEG','MP4','MPG','MPEG-1','MPEG-2','MPEG-4','FLA','FLR','M4V','MKV','MOV','SWF','WMV'];
-	
+	var SIGNAL_FORMAT = ['480p','720p','1080p','480','720', '1080'];
 	
 	/**
 	* @returns an array with all the parts of a show
@@ -6109,8 +6131,14 @@ guessTheShow.publicMethod = function() {}
 		full.extension = this.getExtension(cleansed);
 		if (full.extension != "ERROR" ) cleansed = this.removeExtension(cleansed);
 		
-		full.show = this.getShow(cleansed);
+		var hasSignalFormat = this.getSignalFormat(cleansed);
+		if (hasSignalFormat !== null) { 
+			full.signalFormat = hasSignalFormat[0];  // get the first match only
+			cleansed = this.removeSignalFormat(cleansed,full.signalFormat)
+		}
+		
 		full.year = this.getYear(cleansed);
+		full.show = this.getShow(cleansed);
 		return full;
 	}
 	
@@ -6158,6 +6186,17 @@ guessTheShow.publicMethod = function() {}
 		return name;
 	}
 	
+	/**
+	* @returns an array of matching signal formats in the name
+	*/
+	guessTheShow.getSignalFormat = function (fileName) {
+		var regex = new RegExp(SIGNAL_FORMAT.join("|"), "i");
+		return(fileName.match(regex)); // send back the first match
+	}
+	
+	guessTheShow.removeSignalFormat = function (fileName, signalFormat) {
+		return fileName.replace(signalFormat,' ');
+	}
 	
     guessTheShow.getDetailsFromString = function(fileName, hasFileExtension) {
 		setInput(fileName);
@@ -6181,6 +6220,28 @@ guessTheShow.publicMethod = function() {}
 	}
 	
 }( window.guessTheShow = window.guessTheShow || {}, jQuery ));
+// The MIT License (MIT)
+
+// Copyright (c) 2014 Paul Copplestone
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE. 
+
 
 function ArrayCollection() {
     var myArray = new Array;	
@@ -6285,7 +6346,7 @@ movieCollection.SortByRating = function(){
 function movie() {
     this.id; 
     this.title;
-    this.year;
+    this.year = 0;
     this.rating;
     this.genre;
     this.plot;
@@ -6296,7 +6357,30 @@ function movie() {
     this.released;
     this.rawInput;
     this.extension;
+    this.extension;
 }
+
+// The MIT License (MIT)
+
+// Copyright (c) 2014 Paul Copplestone
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE. 
 
 
 $(document).ready(function() {
@@ -6475,16 +6559,17 @@ $(document).ready(function() {
 					cleansedName = cleansedName.substring(0, cleansedName.lastIndexOf('.'));
 				}
 			}
+			var hasSignalFormat = guessTheShow.getSignalFormat(cleansedName);
+			if (hasSignalFormat !== null) { 
+				var signalFormat = hasSignalFormat[0];  // get the first match only
+				cleansedName = guessTheShow.removeSignalFormat(cleansedName, signalFormat);
+				console.debug(rawInput);
+				console.debug(cleansedName);
+			}
 			movieObj.rawInput = rawInput;
-			movieObj.title = guessTheShow.getShow(cleansedName);
 			movieObj.year = guessTheShow.getYear(cleansedName);
-			console.debug(movieObj);
+			movieObj.title = guessTheShow.getShow(cleansedName);
 			
-			/*
-			fileDetails = guessTheShow.getDetailsFromString(fileName, hasFileExtension);
-			if (fileDetails == null) throw "Could not properly read the file name";
-			//if (fileDetails.isValidFileExtention == false) throw "Not a valid movie extension. Please ensure the file is a movie file.";
-			*/
 			
 			getOMDbObject(movieObj);
 		
