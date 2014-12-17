@@ -201,8 +201,6 @@ $(document).ready(function() {
 			if (hasSignalFormat !== null) { 
 				var signalFormat = hasSignalFormat[0];  // get the first match only
 				cleansedName = guessTheShow.removeSignalFormat(cleansedName, signalFormat);
-				console.debug(rawInput);
-				console.debug(cleansedName);
 			}
 			movieObj.rawInput = rawInput;
 			movieObj.year = guessTheShow.getYear(cleansedName);

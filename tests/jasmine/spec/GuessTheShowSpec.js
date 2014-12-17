@@ -27,7 +27,6 @@ describe("\'Guess The Show\'", function() {
 	});
 	
     it("should have the name 'Fury'", function() {
-		console.debug(this.full);
 		expect(this.full.show).toEqual("Fury");
     });
 	
