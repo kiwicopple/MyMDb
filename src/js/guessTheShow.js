@@ -34,7 +34,7 @@ guessTheShow.publicMethod = function() {}
 
 (function( guessTheShow, $, undefined ) {	
 	var VALID_MOVIE_EXTENSIONS = ['AVI','CAM','FLV','MPEG','MP4','MPG','MPEG-1','MPEG-2','MPEG-4','FLA','FLR','M4V','MKV','MOV','SWF','WMV'];
-	
+	var SIGNAL_FORMAT = ['480p','720p','1080p','480','720', '1080'];
 	
 	/**
 	* @returns an array with all the parts of a show
@@ -49,8 +49,14 @@ guessTheShow.publicMethod = function() {}
 		full.extension = this.getExtension(cleansed);
 		if (full.extension != "ERROR" ) cleansed = this.removeExtension(cleansed);
 		
-		full.show = this.getShow(cleansed);
+		var hasSignalFormat = this.getSignalFormat(cleansed);
+		if (hasSignalFormat !== null) { 
+			full.signalFormat = hasSignalFormat[0];  // get the first match only
+			cleansed = this.removeSignalFormat(cleansed,full.signalFormat)
+		}
+		
 		full.year = this.getYear(cleansed);
+		full.show = this.getShow(cleansed);
 		return full;
 	}
 	
@@ -98,6 +104,17 @@ guessTheShow.publicMethod = function() {}
 		return name;
 	}
 	
+	/**
+	* @returns an array of matching signal formats in the name
+	*/
+	guessTheShow.getSignalFormat = function (fileName) {
+		var regex = new RegExp(SIGNAL_FORMAT.join("|"), "i");
+		return(fileName.match(regex)); // send back the first match
+	}
+	
+	guessTheShow.removeSignalFormat = function (fileName, signalFormat) {
+		return fileName.replace(signalFormat,' ');
+	}
 	
     guessTheShow.getDetailsFromString = function(fileName, hasFileExtension) {
 		setInput(fileName);

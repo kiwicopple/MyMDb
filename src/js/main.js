@@ -197,16 +197,17 @@ $(document).ready(function() {
 					cleansedName = cleansedName.substring(0, cleansedName.lastIndexOf('.'));
 				}
 			}
+			var hasSignalFormat = guessTheShow.getSignalFormat(cleansedName);
+			if (hasSignalFormat !== null) { 
+				var signalFormat = hasSignalFormat[0];  // get the first match only
+				cleansedName = guessTheShow.removeSignalFormat(cleansedName, signalFormat);
+				console.debug(rawInput);
+				console.debug(cleansedName);
+			}
 			movieObj.rawInput = rawInput;
-			movieObj.title = guessTheShow.getShow(cleansedName);
 			movieObj.year = guessTheShow.getYear(cleansedName);
-			console.debug(movieObj);
+			movieObj.title = guessTheShow.getShow(cleansedName);
 			
-			/*
-			fileDetails = guessTheShow.getDetailsFromString(fileName, hasFileExtension);
-			if (fileDetails == null) throw "Could not properly read the file name";
-			//if (fileDetails.isValidFileExtention == false) throw "Not a valid movie extension. Please ensure the file is a movie file.";
-			*/
 			
 			getOMDbObject(movieObj);
 		

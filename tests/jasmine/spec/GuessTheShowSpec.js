@@ -47,6 +47,25 @@ describe("\'Guess The Show\'", function() {
   });
 	
 	
+  describe("when guessing the full details of 'Trainspotting.1080p-iKA.mkv'", function() {
+	beforeEach(function() {
+		this.full = guessTheShow.getFullShowDetails("Trainspotting.1080p-iKA.mkv");
+	});
+	
+    it("should have the name 'Trainspotting'", function() {
+		expect(this.full.show).toEqual("Trainspotting  -iKA");
+    });
+	it("should have the year 'undefined'", function() {
+		expect(this.full.year).toBeUndefined();
+    });
+	it("should have the extension 'MKV'", function() {
+		expect(this.full.extension).toEqual('MKV');
+    });
+	it("should have the signal format '1080p'", function() {
+		expect(this.full.signalFormat).toEqual('1080p');
+    });
+  });
+  
   describe("when guessing the full details of '21 Grams 2001 - Copy.avi'", function() {
 	beforeEach(function() {
 		this.full = guessTheShow.getFullShowDetails("21 Grams 2001 - Copy.avi");
@@ -62,7 +81,5 @@ describe("\'Guess The Show\'", function() {
 		expect(this.full.extension).toEqual('AVI');
     });
   });
-  
-  
   
 });

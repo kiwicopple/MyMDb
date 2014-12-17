@@ -124,7 +124,7 @@ movieCollection.SortByRating = function(){
 function movie() {
     this.id; 
     this.title;
-    this.year;
+    this.year = 0;
     this.rating;
     this.genre;
     this.plot;
