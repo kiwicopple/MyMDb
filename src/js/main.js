@@ -47,14 +47,32 @@ $(document).ready(function() {
 		}
 	}
 
+	
+	function fillMovieObjectFromOMDbResponse(movie, OMDbResponse) {
+		movie.id = OMDbResponse.imdbID;
+		movie.title = OMDbResponse.Title;
+		movie.year = OMDbResponse.Year;
+		movie.rating = OMDbResponse.imdbRating;
+		movie.genre = OMDbResponse.Genre;
+		movie.plot = OMDbResponse.Plot;
+		movie.runtime = OMDbResponse.Runtime;
+		movie.language = OMDbResponse.Language;
+		movie.actors = OMDbResponse.Actors;
+		movie.director = OMDbResponse.Director;
+		movie.released = moment(OMDbResponse.Released).format('YYYY-MM-DD');
+		return movie;
+	}
+	
     function getOMDbObject(movie) {
-        var uri = "http://www.omdbapi.com/?t=" + movie.title + "&y=" + movie.year + "&plot=short&r=json";
-
+		var title = movie.title.split(" ").join("+");
+        var uri = "http://www.omdbapi.com/?t=" + title + "&y=" + movie.year + "&plot=short&r=json";
+		
         $.getJSON(uri, function(OMDbResponse) {
-			if (!movieCollection.exists(OMDbResponse.imdbID)) { // check if we already have the movie
-				if (OMDbResponse.Response == "False") {
-					var errorArray = [movie.rawInput, OMDbResponse.Error];
-					ERROR_LIST.push(errorArray);
+			
+				if (OMDbResponse.Response == "False") { // movie not found
+					
+					var errorArray = [movie.rawInput, OMDbResponse.Error + " Does it have the correct year in the file name?"];
+					ERROR_LIST.push(errorArray);					
 				}
 				else if (OMDbResponse.Type == "episode"){
 					var err = "We don't yet support TV shows. This appears to be a TV episode: ";
@@ -63,21 +81,12 @@ $(document).ready(function() {
 					ERROR_LIST.push(errorArray);
 				}
 				else {
-					movie.id = OMDbResponse.imdbID;
-					movie.title = OMDbResponse.Title;
-					movie.rating = OMDbResponse.imdbRating;
-					movie.genre = OMDbResponse.Genre;
-					movie.plot = OMDbResponse.Plot;
-					movie.runtime = OMDbResponse.Runtime;
-					movie.language = OMDbResponse.Language;
-					movie.actors = OMDbResponse.Actors;
-					movie.director = OMDbResponse.Director;
-					movie.released = moment(OMDbResponse.Released).format('YYYY-MM-DD');
-					
-					addMovieToList(movie);
-					movieCollection.add(movie);
+					if (!movieCollection.exists(OMDbResponse.imdbID)) { // check if we already have the movie
+						movie = fillMovieObjectFromOMDbResponse(movie, OMDbResponse)			
+						addMovieToList(movie);
+						movieCollection.add(movie);
+					}
 				}
-			}
         }).done(function() {
 			updateProgress();
 		});

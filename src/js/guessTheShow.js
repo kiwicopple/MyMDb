@@ -61,7 +61,7 @@ guessTheShow.publicMethod = function() {}
 	}
 	
 	guessTheShow.getCleansedName = function (fileName) {
-		fileName = fileName.replace(/['"]+/g, ''); // remove all quotes
+		fileName = fileName.replace(/["]+/g, ''); // remove all quotes
 		fileName = fileName.split('/').pop(); // remove path
 		fileName = fileName.split('\\').pop(); // remove path
 		fileName.trim();
@@ -87,7 +87,7 @@ guessTheShow.publicMethod = function() {}
 		var regex = /"?[\(\[\s\.]+(\d{4})/;
 		var year = fileName.match(regex);
 		if (year === null) // no year was found 
-			return undefined;
+			return "";
 		else return fileName.match(regex)[1];
 	}
 	

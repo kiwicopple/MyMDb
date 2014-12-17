@@ -8,15 +8,15 @@ describe("\'Guess The Show\'", function() {
   
   describe("when it cleanses the name", function() {
 	beforeEach(function() {
-		this.longstring = "C:\\This\ is a fake/file/path\\\'with\"bad.data,init.avi";
+		this.longstring = "C:\\This\ is a fake/file/path\\\here's \"bad.data,init.avi";
 		this.cleansed = guessTheShow.getCleansedName(this.longstring);
 	});
 	
     it("should remove all quotes", function() {
-		expect(this.cleansed.indexOf("'")).toEqual(-1);
+		expect(this.cleansed.indexOf("\"")).toEqual(-1);
     });
 	it("should remove the path", function() {
-		expect(this.cleansed).toEqual("withbad.data,init.avi");
+		expect(this.cleansed).toEqual("here's bad.data,init.avi");
     });
 	
   });
@@ -54,8 +54,8 @@ describe("\'Guess The Show\'", function() {
     it("should have the name 'Trainspotting'", function() {
 		expect(this.full.show).toEqual("Trainspotting  -iKA");
     });
-	it("should have the year 'undefined'", function() {
-		expect(this.full.year).toBeUndefined();
+	it("should have an empty year", function() {
+		expect(this.full.year).toEqual("");
     });
 	it("should have the extension 'MKV'", function() {
 		expect(this.full.extension).toEqual('MKV');
